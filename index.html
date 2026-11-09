@@ -1,12 +1,279 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiProyecto – Herramienta de código abierto</title>
+  <meta name="description" content="MiProyecto: una herramienta de código abierto rápida y simple. Instálala en un minuto.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --surface: #ffffff;
+      --ink: #0f1b2d;
+      --muted: #4b5a70;
+      --line: #d3dbe6;
+      --accent: #1f6feb;
+      --accent-ink: #ffffff;
+      --term-bg: #0f1b2d;
+      --term-ink: #dbe6f5;
+      --ok: #3fb950;
+      --font: "Space Grotesk", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1220;
+        --surface: #131c2e;
+        --ink: #e7edf7;
+        --muted: #9aa9bf;
+        --line: #243148;
+        --accent: #4c8dff;
+        --accent-ink: #08101e;
+        --term-bg: #070c16;
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+    /* Header */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem;
+    }
+    .brand { font-weight: 700; font-size: 1.25rem; text-decoration: none; }
+    .site-header nav { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+    .site-header nav a:not(.btn) { text-decoration: none; color: var(--muted); }
+    .site-header nav a:not(.btn):hover { color: var(--ink); }
+
+    /* Botones */
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 1.4rem;
+      background: var(--accent);
+      color: var(--accent-ink);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+    .btn-small { padding: 0.45rem 1rem; font-size: 0.95rem; }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem 4.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin: 0 0 1.25rem;
+    }
+    .lead { font-size: 1.2rem; color: var(--muted); max-width: 52ch; margin: 0 0 2rem; }
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .meta { color: var(--muted); font-size: 0.9rem; margin: 1.5rem 0 0; }
+
+    /* Terminal */
+    .terminal {
+      background: var(--term-bg);
+      color: var(--term-ink);
+      border-radius: 12px;
+      box-shadow: 8px 8px 0 var(--accent);
+      overflow: hidden;
+    }
+    .terminal-bar { display: flex; gap: 6px; padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .terminal-bar span { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.25); }
+    .terminal pre { margin: 0; padding: 1.25rem; overflow-x: auto; font-family: var(--mono); font-size: 0.9rem; line-height: 1.8; }
+    .terminal .dim { color: #7f93b2; }
+    .terminal .ok { color: var(--ok); }
+
+    /* Secciones */
+    .section { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem; border-top: 1px solid var(--line); }
+    .section h2 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); letter-spacing: -0.01em; margin: 0 0 2rem; }
+    h3 { font-size: 1.15rem; margin: 0 0 0.4rem; }
+
+    .features { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 3rem; }
+    .features li { padding: 1.5rem 0; border-top: 1px solid var(--line); }
+    .features p { margin: 0; color: var(--muted); max-width: 46ch; }
+
+    .steps { list-style: none; counter-reset: paso; margin: 0; padding: 0; display: grid; gap: 1.5rem; max-width: 720px; }
+    .steps li { counter-increment: paso; position: relative; padding-left: 3.25rem; }
+    .steps li::before {
+      content: counter(paso);
+      position: absolute; left: 0; top: 0;
+      width: 2.25rem; height: 2.25rem;
+      display: grid; place-items: center;
+      background: var(--accent); color: var(--accent-ink);
+      border-radius: 50%; font-weight: 700;
+    }
+    .code-line {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem 0.6rem 1rem;
+    }
+    .code-line code { font-family: var(--mono); font-size: 0.9rem; overflow-x: auto; white-space: nowrap; }
+    .copy {
+      flex-shrink: 0;
+      font: inherit; font-size: 0.85rem; font-weight: 500;
+      background: transparent; color: var(--ink);
+      border: 1px solid var(--line); border-radius: 6px;
+      padding: 0.3rem 0.8rem; cursor: pointer;
+    }
+    .copy:hover { border-color: var(--accent); }
+
+    /* Footer */
+    .site-footer {
+      max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 3rem;
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      border-top: 1px solid var(--line);
+      color: var(--muted); font-size: 0.9rem;
+    }
+    .site-footer p { margin: 0; }
+
+    /* Responsive */
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; gap: 2.5rem; padding-top: 2rem; }
+      .features { grid-template-columns: 1fr; }
+      .site-header nav { gap: 1rem; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Mi sitio web</h1>
-    
+
+  <header class="site-header">
+    <a class="brand" href="#inicio">MiProyecto</a>
+    <nav aria-label="Principal">
+      <a href="#funciones">Funciones</a>
+      <a href="#instalar">Instalar</a>
+      <a href="#contribuir">Contribuir</a>
+      <a class="btn btn-small" href="https://github.com/tu-usuario/tu-proyecto">Ver en GitHub</a>
+    </nav>
+  </header>
+
+  <main id="inicio">
+
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Automatiza lo repetitivo. Publica más rápido.</h1>
+        <p class="lead">MiProyecto es una herramienta de código abierto que configura, prueba y despliega tu proyecto con un solo comando.</p>
+        <div class="actions">
+          <a class="btn" href="#instalar">Empezar ahora</a>
+          <a class="btn btn-ghost" href="https://github.com/tu-usuario/tu-proyecto">Dar una estrella</a>
+        </div>
+        <p class="meta">Licencia MIT · Versión 1.0.0 · Funciona en Windows, macOS y Linux</p>
+      </div>
+
+      <div class="terminal" role="img" aria-label="Ejemplo de uso en la terminal">
+        <div class="terminal-bar"><span></span><span></span><span></span></div>
+        <pre><code><span class="dim">$</span> git clone https://github.com/tu-usuario/tu-proyecto
+<span class="dim">$</span> cd tu-proyecto
+<span class="dim">$</span> npm install
+<span class="dim">$</span> npm run start
+
+<span class="ok">✔</span> Proyecto listo en http://localhost:3000</code></pre>
+      </div>
+    </section>
+
+    <section id="funciones" class="section">
+      <h2>Lo que hace por ti</h2>
+      <ul class="features">
+        <li>
+          <h3>Configuración en un minuto</h3>
+          <p>Sin archivos largos que editar. Los valores por defecto funcionan en la mayoría de proyectos.</p>
+        </li>
+        <li>
+          <h3>Pruebas automáticas</h3>
+          <p>Ejecuta tus pruebas en cada cambio y muestra qué falló y dónde.</p>
+        </li>
+        <li>
+          <h3>Despliegue con un comando</h3>
+          <p>Publica en GitHub Pages sin pasos manuales.</p>
+        </li>
+        <li>
+          <h3>Extensible</h3>
+          <p>Agrega plugins propios o usa los que ya creó la comunidad.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="instalar" class="section">
+      <h2>Instala en tres pasos</h2>
+      <ol class="steps">
+        <li>
+          <h3>Clona el repositorio</h3>
+          <div class="code-line"><code>git clone https://github.com/tu-usuario/tu-proyecto.git</code><button class="copy" type="button">Copiar</button></div>
+        </li>
+        <li>
+          <h3>Instala las dependencias</h3>
+          <div class="code-line"><code>npm install</code><button class="copy" type="button">Copiar</button></div>
+        </li>
+        <li>
+          <h3>Inicia el proyecto</h3>
+          <div class="code-line"><code>npm run start</code><button class="copy" type="button">Copiar</button></div>
+        </li>
+      </ol>
+    </section>
+
+    <section id="contribuir" class="section">
+      <h2>Hecho entre todos</h2>
+      <p class="lead">¿Encontraste un error o tienes una idea? Abre un issue o envía un pull request. Toda ayuda cuenta, incluso corregir una errata en la documentación.</p>
+      <div class="actions">
+        <a class="btn" href="https://github.com/tu-usuario/tu-proyecto/issues">Abrir un issue</a>
+        <a class="btn btn-ghost" href="https://github.com/tu-usuario/tu-proyecto/blob/main/CONTRIBUTING.md">Guía para contribuir</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 MiProyecto. Publicado bajo licencia MIT.</p>
+    <a href="https://github.com/tu-usuario/tu-proyecto">github.com/tu-usuario/tu-proyecto</a>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.copy').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var text = btn.previousElementSibling.textContent;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = 'Copiado';
+          setTimeout(function () { btn.textContent = 'Copiar'; }, 1500);
+        });
+      });
+    });
+  </script>
 </body>
 </html>
